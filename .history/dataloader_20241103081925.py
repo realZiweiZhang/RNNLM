@@ -1,1 +1,0 @@
-f = open("data/wsj_train.txt")

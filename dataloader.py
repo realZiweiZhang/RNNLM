@@ -60,7 +60,7 @@ def word2char(word):
         chars[len(chars)+1] = char2idx[char]
     chars[len(chars)+1] = char2idx[special_tokens['END']]
     
-    #TODO length
+    #TODO length-0p;.67
 if __name__ == '__main__':
     train_lines = get_lines_from_txt('train')
     
