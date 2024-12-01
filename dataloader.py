@@ -90,7 +90,7 @@ def char_dataset_generation(split):
     return split_dict
 
 
-class WsjDataset(Dataset):
+class wsjDataset(Dataset):
     def __init__(self,split):
         self.split_dict = char_dataset_generation(split)
         
@@ -104,9 +104,21 @@ class WsjDataset(Dataset):
         chars_idx = line_dict['chars']
         return words_idx, chars_idx
     
+    @property
+    def get_word_vocab_size(self):
+        return len(idx2word)
+    
+    @property
+    def get_char_vocab_size(self):
+        return len(idx2char)
+    
+    @property
+    def get_max_word_l(self):
+        raise NotImplementedError
+
 if __name__ == '__main__':
     train_lines = get_lines_from_txt('train')
-    
+    print('size of word vocabulary %d', len(idx2word))
     print(lines2word([train_lines[1]]))
     
     

@@ -1,43 +1,23 @@
 import torch.nn as nn
+ 
 
-class Highway(nn.Module):
-    def __init__(self,num_layer=2,hidden_size):
-        super().__init__()
-        self.hidden_size = hidden_size
-        self.num_layer = num_layer
-        
-        self.linears = nn.ModuleList(nn.Linear(hidden_size,hidden_size) for _ in range(num_layer))
-        self.g = nn.ReLU()
-        
-        self.transform_linears = nn.ModuleList(nn.Linear(hidden_size,hidden_size) for _ in range(num_layer))
-        self.sigma = nn.Sigmoid()
-
-    def forward(x)
-        assert x.shape[-1] == self.hidden_size, "wrong feature size input to highway"
-        
-        for i in range(self.num_layer):
-            h_x = self.g(self.linears[i](x))
-            
-            y_x = self.transform_linears[i](x)
-            transform_gate = self.sigma(y_x)
-            carry_gate = 1 - transform_gate
-            
-            x = transform_gate * h_x + carry_gate * x
-        return x
-
-class charCNN(nn.Module):
-    
-
-class RNN_LM(nn.Module):
+class rnnLM(nn.Module):
     def __init__(self,
-                 num_highway_layers=2,
-                 char_cnn = None,
-                 num_layer=2,
                  rnn_size=650,
-                 char_vec_size=None,
+                 num_layer=2,
+                 dropout=0.5,
+                 word_vocab_size=None,
                  word_vec_size=None,
-                 use_chars=True,
+                 char_vocab_size=None,
+                 char_vec_size=None,
+                 feature_maps=None,
+                 kernels=None,
+                 get_max_word_l=None,
                  use_words=False
+                 use_chars=True,
+                 batch_norm=False,
+                 num_highway_layers=2,
+                 hsm=0
                  ):
         super().__init__()
         self.highway_mlp = highway
@@ -47,21 +27,26 @@ class RNN_LM(nn.Module):
         self.use_words = use_words
         
         self.input_size = 0
-        
+        self.rnn_size = rnn_size
         assert char_vec_size is not None, 'undefined char vec size'
         assert word_vec_size is not None, 'undefined word vec size'
         
         if use_chars:
             self.input_size = char_vec_size
             self.char_cnn = None
+            self.char_vec_layer = nn.Embedding(char_vocab_size, char_vec_size)
             if use_words:
                 self.input_size += word_vec_size
+                self.word_vec_layer = nn.Embedding(word_vocab_size, word_vec_size)
         else:
             self.input_size = word_vec_size
+            self.word_vec_layer = nn.Embedding(word_vocab_size, word_vec_size)
         
         self.highway_mlp = Highway(self.input_size, highway_layers)
         # self.rnn = nn.LSTM(input_size, hidden_size, num_layers,dropout=0.5)
-        self.lstm_cells = nn.ModuleList(self.input_size if i == 0 else rnn_size, rnn)
+        self.lstm_cells = nn.ModuleList(self.input_size if i == 0 else rnn_size, rnn_size)
+        
+        self.drop_out= nn.Dropout(p=dropout)
         
         if self.highway_mlp is None:
             raise NotImplementedError("The 'highway function is not implemented")
@@ -69,21 +54,41 @@ class RNN_LM(nn.Module):
         if self.char_cnn is None:
             raise NotImplementedError("The 'char_cnn function is not implemented")
 
-        layers = []
-        for i in range(self.num_layer):
-            if i == 0:
-                if use_chars:
-                    layers.append(self.char_cnn)
-                layers.append(self.highway_mlp)
-            else:
-                layers.append(nn.Dropout(p=0.5))
+        self.proj = nn.Linear(rnn_size,word_vocab_size)
+        self.softmax = nn.LogSoftmax(dim=-1)
             
-            
-              
-    def forward(x):
+    def forward(self, word_indices=None, char_indices=None,lsm=0):
         """_summary_
 
         Args:
             x (_type_): output from the character-level CNN
         """
-        for i 
+        if self.use_chars:
+            assert char_indices is not None, "no char indices are passed to LSTM"
+            char_embed = self.char_vec_layer(char_indices)
+            
+            char_embed = self.char_cnn(char_embed)
+            if self.use_words:
+                word_embed = self.word_vec_layer(word_indices)
+                char_embed = torch.cat((char_embed, word_embed),-1)
+            x = char_embed
+        else:
+            x = self.word_vec_layer(word_indices)
+        
+        # initialize hx, cx
+        outputs = []
+        hx,cx = torch.zeros(x.shape[0],self.rnn_size)
+       for i in range(self.num_layer):
+           if i == 0:
+               x = self.highway_mlp(x)
+            hx, cx = self.lstm_cells[i](x,(hx,cx))
+        
+            x = self.dropout(hx)
+            outputs.append((hx,cx))
+            
+        # decoder
+        if lsm > 0:
+            return outputs, hx
+        else:
+            prob = self.softmax(soft.proj(hx))
+            return outputs, prob
