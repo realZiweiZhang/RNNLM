@@ -18,7 +18,7 @@ import torch.nn.functional as F
         
 
 class highwayMLP(nn.Module):
-    def __init__(self,num_layer=2,hidden_size):
+    def __init__(self,num_layer=2,hidden_size=650):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_layer = num_layer
@@ -29,7 +29,7 @@ class highwayMLP(nn.Module):
         self.transform_linears = nn.ModuleList(nn.Linear(hidden_size,hidden_size) for _ in range(num_layer))
         self.sigma = nn.Sigmoid()
 
-    def forward(x)
+    def forward(self,x):
         assert x.shape[-1] == self.hidden_size, "wrong feature size input to highway"
         
         for i in range(self.num_layer):
