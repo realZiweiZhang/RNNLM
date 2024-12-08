@@ -13,11 +13,11 @@ special_tokens = {
 }
 # special_tokens.EOS = opt.EOS
 
-word2idx = {}
-idx2word = {}
+word2idx = {0:0, 'UNK':1 }
+idx2word = {0:0, 1:'UNK'}
 
-idx2char = {0:0, 1:special_tokens['START'], 2:special_tokens['END']} # global
-char2idx = {0:0, special_tokens['START']:1, special_tokens['END']:2} # global
+idx2char = {0:0, 1:special_tokens['START'], 2:special_tokens['END'],3:special_tokens['UNK']} # global
+char2idx = {0:0, special_tokens['START']:1, special_tokens['END']:2,special_tokens['UNK']:3} # global
 # char2idx[special_tokens['START']]=1
 # char2idx[special_tokens['END']]=2
 
@@ -32,10 +32,10 @@ def get_lines_from_txt(split=None):
     with open(txt_path, encoding="utf-8") as f:
         lines = f.readlines()
     
-    print(lines[2])
+    # print(lines[2])
     return lines
     
-def lines2word(lines):
+def lines2word(lines,split):
     num_word = 0
     line_dict = {}
     output_word_idx = [] # local
@@ -55,19 +55,24 @@ def lines2word(lines):
         max_line_length = max(len(words),max_line_length)
         for word in words:
             num_word += 1
-            max_word_length = max(len(word)+2, max_word_length)
+            max_word_length = max(len(word), max_word_length)
             
             #TODO add spectial symbors into word dict
             if word not in word2idx:
-                idx2word[len(idx2word)+1] = word 
-                word2idx[word] = len(idx2word)
-                
-            output_word_idx.append(word2idx[word])
-            line_word_idx.append(word2idx[word])
+                if split == 'train':
+                    idx2word[len(idx2word)] = word 
+                    word2idx[word] = len(idx2word)-1
+                    add_word = word
+                else:
+                    add_word = 'UNK'
+            else:
+                add_word = word
+            output_word_idx.append(word2idx[add_word])
+            line_word_idx.append(word2idx[add_word])
             
             char_length.append(len(word))
             
-            char_idx = word2char(word) # chars for each word
+            char_idx = word2char(word,split) # chars for each word
             line_chars.append(char_idx) # all chars for each line
             # output_chars.append(char_idx)
         y_labels = create_y_label(line_word_idx)
@@ -104,15 +109,20 @@ def word_and_char_padding(line_dict,max_line_length, max_word_length):
         line_dict[i]['word_idx'] = words_padded
     return line_dict
 
-def word2char(word): 
+def word2char(word,split): 
     chars = {1:char2idx[special_tokens['START']]}
     for char in word:
-        if char not in char2idx.keys():
-            length = len(idx2char)+1
-            idx2char[length] = char
-            char2idx[char] = length
-
-        chars[len(chars)+1] = char2idx[char]
+        if char not in char2idx:
+            if split == 'train':
+                length = len(idx2char)
+                idx2char[length] = char
+                char2idx[char] = length-1
+                add_char = char
+            else:
+                add_char = special_tokens['UNK']
+        else:
+            add_char = char
+        chars[len(chars)+1] = char2idx[add_char]
     chars[len(chars)+1] = char2idx[special_tokens['END']]
 
     return list(chars.values())    
@@ -123,7 +133,7 @@ def max_length_truncation(chars, max_length):
     
 def char_dataset_generation(split):
     split_lines = get_lines_from_txt(split)
-    split_dict = lines2word(split_lines)
+    split_dict = lines2word(split_lines,split)
     
     return split_dict
 
