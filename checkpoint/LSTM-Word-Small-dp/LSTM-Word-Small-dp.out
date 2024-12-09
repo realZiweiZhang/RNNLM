@@ -1,0 +1,96 @@
+Namespace(batch_norm=False, batch_size=20, char_vec_size=15, data_dir='data/', decay_when=1, dropout=0.5, en_dataset=True, feature_maps='[25,50,75,100,125,150]', highway_layers=1, hsm=0, kernels='[1,2,3,4,5,6]', learning_rate=1, learning_rate_decay=0.5, max_epochs=25, max_grad_norm=5, max_word_l=65, num_layers=2, param_init=0.05, rnn_size=300, save_path='checkpoint/LSTM-Word-Small-dp', seed=3435, seq_length=35, use_chars=0, use_gpu=True, use_words=1, word_vec_size=650)
+using CUDA on GPU to train the model
+loading wsj dataset
+load sentences from path: data/wsj_train.txt
+load sentences from path: data/wsj_dev.txt
+load sentences from path: data/wsj_test.txt
+start initialization
+start training
+PPL: tensor(974.1605, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 0, loss 9.204057693481445
+start training
+PPL: tensor(648.4707, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 1, loss 8.827007293701172
+start training
+PPL: tensor(548.7194, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 2, loss 8.65302848815918
+start training
+PPL: tensor(503.7519, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 3, loss 8.528373718261719
+start training
+PPL: tensor(447.9472, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 4, loss 8.433561325073242
+start training
+PPL: tensor(407.6721, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 5, loss 8.365813255310059
+start training
+PPL: tensor(384.4334, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 6, loss 8.301488876342773
+start training
+PPL: tensor(367.1558, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 7, loss 8.241368293762207
+start training
+PPL: tensor(345.2445, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 8, loss 8.190542221069336
+start training
+PPL: tensor(327.1755, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 9, loss 8.148401260375977
+start training
+PPL: tensor(313.6509, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 10, loss 8.11337947845459
+start training
+PPL: tensor(293.8620, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 11, loss 8.076354026794434
+start training
+PPL: tensor(296.0274, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 12, loss 8.040035247802734
+start training
+PPL: tensor(276.2499, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 13, loss 8.00831127166748
+PPL: tensor(89.4415, device='cuda:0')
+start training
+PPL: tensor(270.5709, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 14, loss 7.980230808258057
+PPL: tensor(87.9333, device='cuda:0')
+start training
+PPL: tensor(267.4563, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 15, loss 7.951632499694824
+PPL: tensor(86.1218, device='cuda:0')
+start training
+PPL: tensor(263.4972, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 16, loss 7.929074287414551
+PPL: tensor(82.4171, device='cuda:0')
+start training
+PPL: tensor(244.0855, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 17, loss 7.902153491973877
+PPL: tensor(79.4896, device='cuda:0')
+start training
+PPL: tensor(239.5665, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 18, loss 7.876641750335693
+PPL: tensor(79.4507, device='cuda:0')
+start training
+PPL: tensor(236.3655, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 19, loss 7.869570732116699
+PPL: tensor(77.9290, device='cuda:0')
+start training
+PPL: tensor(225.2564, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 20, loss 7.836756229400635
+PPL: tensor(76.3885, device='cuda:0')
+start training
+PPL: tensor(222.7528, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 21, loss 7.8191986083984375
+PPL: tensor(75.1042, device='cuda:0')
+start training
+PPL: tensor(210.4777, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 22, loss 7.795049667358398
+PPL: tensor(74.5499, device='cuda:0')
+start training
+PPL: tensor(206.0767, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 23, loss 7.774444580078125
+PPL: tensor(74.4620, device='cuda:0')
+start training
+PPL: tensor(211.1212, device='cuda:0', grad_fn=<DivBackward0>)
+training: epoch 24, loss 7.768189907073975
+PPL: tensor(72.9905, device='cuda:0')
+----- test results -----
+PPL: tensor(83.6412, device='cuda:0')
